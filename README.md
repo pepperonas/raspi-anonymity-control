@@ -79,10 +79,39 @@ sudo check-anonymity
 
 ### Proxy Configuration
 
-Configure your applications to use:
+Configure your devices to use:
 - **SOCKS5 Proxy**: `raspberry-pi-ip:9050`
 - **HTTP Proxy**: `raspberry-pi-ip:8118`
-- **Transparent Proxy**: Automatic for all network devices
+- **Transparent Proxy**: Automatic for devices connected through Pi
+
+#### Client Configuration
+
+**macOS:**
+1. System Preferences → Network → Wi-Fi → Advanced → Proxies
+2. Enable "SOCKS Proxy" and "Web Proxy (HTTP)"
+3. Set both to: `192.168.2.134` with respective ports (9050 for SOCKS, 8118 for HTTP)
+
+**Windows:**
+1. Settings → Network & Internet → Proxy
+2. Use setup script: `http://192.168.2.134:8118/proxy.pac` (if available)
+3. Or manual setup: SOCKS proxy `192.168.2.134:9050`
+
+**Firefox (All platforms):**
+1. Settings → Network Settings → Manual proxy configuration
+2. SOCKS Host: `192.168.2.134` Port: `9050`
+3. Select "SOCKS v5"
+4. Enable "Proxy DNS when using SOCKS v5"
+
+**Chrome/Safari:**
+- Use system proxy settings (configured above)
+
+#### Testing Anonymization
+After configuration, verify anonymity:
+- Visit: https://check.torproject.org
+- Check IP: https://whatismyipaddress.com
+- DNS leak test: https://dnsleaktest.com
+
+⚠️ **Important**: Without proxy configuration, devices will use their normal internet connection and won't be anonymized.
 
 ## 🔧 Configuration
 
