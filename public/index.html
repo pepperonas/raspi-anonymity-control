@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raspi Anonymity Control</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    
+    <style>
+        :root {
+            --background-dark: #2B2E3B;
+            --background-darker: #252830;
+            --card-background: #343845;
+            --accent-blue: #688db1;
+            --accent-green: #9cb68f;
+            --accent-red: #e16162;
+            --text-primary: #d1d5db;
+            --text-secondary: #9ca3af;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            --radius-sm: 0.375rem;
+            --radius: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                        sans-serif;
+            background: linear-gradient(135deg, var(--background-darker) 0%, var(--background-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(156, 182, 143, 0.2);
+            color: var(--accent-green);
+        }
+
+        .status-inactive {
+            background: rgba(225, 97, 98, 0.2);
+            color: var(--accent-red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a7d9f;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #8aa77f;
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d15152;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            padding: 1rem;
+            background: var(--background-darker);
+            border-radius: var(--radius);
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            word-break: break-all;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(156, 182, 143, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .alert-error {
+            background: rgba(225, 97, 98, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .loader {
+            border: 3px solid var(--background-darker);
+            border-top: 3px solid var(--accent-blue);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Raspi Anonymity Control</h1>
+        <p class="subtitle">Zentrale Steuerung für Tor, ProxyChains und Anonymisierung</p>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="grid">
+            <!-- Status Card -->
+            <div class="card">
+                <h2 class="card-title">📊 System Status</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Tor Service</div>
+                        <div id="tor-status" class="status-indicator status-inactive">
+                            <span class="status-dot"></span>
+                            <span>Inaktiv</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Privoxy</div>
+                        <div id="privoxy-status" class="status-indicator status-inactive">
+                            <span class="status-dot"></span>
+                            <span>Inaktiv</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Pi-hole</div>
+                        <div id="pihole-status" class="status-indicator status-inactive">
+                            <span class="status-dot"></span>
+                            <span>Inaktiv</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Info Card -->
+            <div class="card">
+                <h2 class="card-title">🌐 Netzwerk Info</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Tor Exit IP</div>
+                        <div id="tor-ip" class="info-value">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Hostname</div>
+                        <div id="hostname" class="info-value">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Controls Card -->
+            <div class="card">
+                <h2 class="card-title">⚡ Quick Controls</h2>
+                <div class="control-buttons">
+                    <button id="btn-start" class="btn btn-success" onclick="startServices()">
+                        ▶️ Start All
+                    </button>
+                    <button id="btn-stop" class="btn btn-danger" onclick="stopServices()">
+                        ⏹️ Stop All
+                    </button>
+                    <button id="btn-new-circuit" class="btn btn-outline" onclick="newCircuit()">
+                        🔄 Neue IP
+                    </button>
+                </div>
+            </div>
+
+            <!-- Spoofing Controls Card -->
+            <div class="card">
+                <h2 class="card-title">🎭 Spoofing Controls</h2>
+                <div class="control-buttons">
+                    <button id="btn-spoof-mac" class="btn btn-primary" onclick="spoofMAC()">
+                        🔀 MAC Spoofing
+                    </button>
+                    <button id="btn-change-hostname" class="btn btn-primary" onclick="changeHostname()">
+                        🏷️ Neuer Hostname
+                    </button>
+                </div>
+                <div class="info-grid" style="margin-top: 1rem;">
+                    <div class="info-item">
+                        <div class="info-label">MAC Adressen</div>
+                        <div id="mac-addresses" class="info-value" style="font-size: 0.875rem;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proxy Settings Card -->
+            <div class="card">
+                <h2 class="card-title">🔧 Proxy Einstellungen</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">SOCKS5 Proxy</div>
+                        <div class="info-value">raspi:9050</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">HTTP Proxy</div>
+                        <div class="info-value">raspi:8118</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Transparent Proxy</div>
+                        <div class="info-value">Automatisch</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="loader" id="loader"></div>
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function setLoading(loading) {
+            isLoading = loading;
+            document.getElementById('loader').className = loading ? 'loader loading' : 'loader';
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.disabled = loading;
+            });
+        }
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                // Update status indicators
+                updateStatusIndicator('tor-status', data.tor);
+                updateStatusIndicator('privoxy-status', data.privoxy);
+                updateStatusIndicator('pihole-status', data.pihole);
+                
+                // Update network info
+                document.getElementById('tor-ip').textContent = data.torIp || '-';
+                document.getElementById('hostname').textContent = data.hostname || '-';
+                document.getElementById('mac-addresses').textContent = 
+                    data.macAddresses ? data.macAddresses.join(', ') : '-';
+                
+            } catch (error) {
+                console.error('Error fetching status:', error);
+            }
+        }
+
+        function updateStatusIndicator(elementId, isActive) {
+            const element = document.getElementById(elementId);
+            if (isActive) {
+                element.className = 'status-indicator status-active';
+                element.innerHTML = '<span class="status-dot"></span><span>Aktiv</span>';
+            } else {
+                element.className = 'status-indicator status-inactive';
+                element.innerHTML = '<span class="status-dot"></span><span>Inaktiv</span>';
+            }
+        }
+
+        async function startServices() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/start', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, data.success ? 'success' : 'error');
+                setTimeout(fetchStatus, 2000);
+            } catch (error) {
+                showAlert('Fehler beim Starten der Dienste', 'error');
+            }
+            setLoading(false);
+        }
+
+        async function stopServices() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/stop', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, data.success ? 'success' : 'error');
+                setTimeout(fetchStatus, 2000);
+            } catch (error) {
+                showAlert('Fehler beim Stoppen der Dienste', 'error');
+            }
+            setLoading(false);
+        }
+
+        async function spoofMAC() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/spoof-mac', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, data.success ? 'success' : 'error');
+                setTimeout(fetchStatus, 2000);
+            } catch (error) {
+                showAlert('Fehler beim MAC Spoofing', 'error');
+            }
+            setLoading(false);
+        }
+
+        async function changeHostname() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/change-hostname', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, data.success ? 'success' : 'error');
+                setTimeout(fetchStatus, 2000);
+            } catch (error) {
+                showAlert('Fehler beim Hostname-Wechsel', 'error');
+            }
+            setLoading(false);
+        }
+
+        async function newCircuit() {
+            setLoading(true);
+            try {
+                const response = await fetch('/api/new-circuit', { method: 'POST' });
+                const data = await response.json();
+                showAlert(data.message, data.success ? 'success' : 'error');
+                setTimeout(fetchStatus, 5000);
+            } catch (error) {
+                showAlert('Fehler beim Circuit-Wechsel', 'error');
+            }
+            setLoading(false);
+        }
+
+        // Initial status fetch
+        fetchStatus();
+        
+        // Auto-refresh every 10 seconds
+        setInterval(fetchStatus, 10000);
+    </script>
+</body>
+</html>
