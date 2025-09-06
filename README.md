@@ -88,8 +88,17 @@ Configure your devices to use:
 
 **macOS:**
 1. System Preferences → Network → Wi-Fi → Advanced → Proxies
-2. Enable "SOCKS Proxy" and "Web Proxy (HTTP)"
-3. Set both to: `192.168.2.134` with respective ports (9050 for SOCKS, 8118 for HTTP)
+2. **Option A (Recommended):** Enable only "SOCKS Proxy"
+   - Server: `192.168.2.134` Port: `9050`
+   - Disable all other proxy options
+3. **Option B:** Enable "Web Proxy (HTTP)" and "Secure Web Proxy (HTTPS)"
+   - Both set to: `192.168.2.134` Port: `8118`
+   - Disable SOCKS Proxy
+4. **Important:** Add to "Bypass proxy settings for these Hosts & Domains":
+   ```
+   192.168.0.0/16, 127.0.0.1, localhost, *.local
+   ```
+   ⚠️ **Do not enable multiple proxy types simultaneously** - this will break connectivity
 
 **Windows:**
 1. Settings → Network & Internet → Proxy
@@ -107,9 +116,14 @@ Configure your devices to use:
 
 #### Testing Anonymization
 After configuration, verify anonymity:
-- Visit: https://check.torproject.org
-- Check IP: https://whatismyipaddress.com
+- Visit: https://check.torproject.org (should show "Congratulations. This browser is configured to use Tor")
+- Check IP: https://whatismyipaddress.com (should show a different IP from a foreign country)
 - DNS leak test: https://dnsleaktest.com
+
+**Troubleshooting:**
+- If you lose internet connection after enabling proxies: disable all proxies first, then enable only SOCKS5
+- If sites don't load: check the bypass settings include local network ranges
+- If Tor check fails: verify the Pi's anonymity services are running with `sudo check-anonymity`
 
 ⚠️ **Important**: Without proxy configuration, devices will use their normal internet connection and won't be anonymized.
 
