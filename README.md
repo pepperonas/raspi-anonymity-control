@@ -1,5 +1,7 @@
 # 🛡️ Raspi Anonymity Control
 
+[![English](https://img.shields.io/badge/lang-English-blue.svg)](README.md) [![Deutsch](https://img.shields.io/badge/lang-Deutsch-yellow.svg)](README.de.md)
+
 A comprehensive anonymity and privacy control system for Raspberry Pi, featuring Tor integration, ProxyChains configuration, MAC address spoofing, and a modern web interface.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
