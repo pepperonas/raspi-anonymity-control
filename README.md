@@ -19,6 +19,26 @@ A comprehensive anonymity and privacy control system for Raspberry Pi, featuring
 - **🔌 Pi-hole Compatible**: Works seamlessly with Pi-hole DNS filtering
 - **📊 Real-time Status**: Monitor Tor connection, exit IP, and service status
 
+## ⚠️ Security Warnings
+
+**IMPORTANT: This project has several security vulnerabilities that need attention before production use:**
+
+### 🚨 Critical Issues
+- **SOCKS Proxy exposed on all interfaces (0.0.0.0:9050)**: Any device on your network can use your Tor connection, creating accountability and abuse risks
+- **Web interface without authentication**: The control panel on port 5555 is accessible to anyone on your network without login
+- **DNS leak potential**: DNS requests may bypass Tor depending on Pi-hole configuration
+- **Incomplete transparent proxy**: Only HTTP/HTTPS traffic is routed through Tor, other protocols may leak
+
+### 🔧 Recommended Security Hardening
+- Bind SOCKS proxy to specific IPs only (`127.0.0.1:9050` or specific client IPs)
+- Add authentication to the web interface (HTTP Auth or token-based)
+- Configure proper DNS routing to prevent leaks
+- Implement complete transparent proxy rules for all traffic
+- Use firewall rules to restrict proxy access to trusted devices
+
+### 🎯 Intended Use Case
+This system is designed as a **LAN gateway** where multiple devices use the Raspberry Pi as their anonymity proxy. Without proper access controls, this creates security risks in multi-user environments.
+
 ## 📋 Prerequisites
 
 - Raspberry Pi (tested on Pi 5)
