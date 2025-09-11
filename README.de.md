@@ -21,15 +21,21 @@ Ein umfassendes Anonymitäts-Gateway für Raspberry Pi, das Tor, VPN und DNS-ove
 ### 🚨 Kritische Probleme
 - **SOCKS-Proxy auf allen Netzwerk-Interfaces (0.0.0.0:9050)**: Jedes Gerät in deinem Netzwerk kann deine Tor-Verbindung nutzen - Missbrauchsrisiko und Accountability-Probleme
 - **Web-Interface ohne Authentifizierung**: Das Control Panel auf Port 5555 ist für jeden im Netzwerk ohne Login zugänglich
-- **DNS-Leak-Potenzial**: DNS-Anfragen können je nach Pi-hole-Konfiguration an Tor vorbei geleitet werden
-- **Unvollständiger transparenter Proxy**: Nur HTTP/HTTPS-Traffic wird durch Tor geleitet, andere Protokolle können "leaken"
+- **DNS-Leak-Potenzial**: Pi-hole, sofern installiert, kann DNS-Anfragen abfangen bevor sie Tor's DNS-Resolver erreichen
+- **~~Unvollständiger transparenter Proxy~~**: ✅ **BEHOBEN** - Leitet nun allen TCP-Traffic durch Tor mit ordnungsgemäßen LAN-Ausnahmen
 
 ### 🔧 Empfohlene Sicherheitshärtung
 - SOCKS-Proxy nur auf bestimmte IPs binden (`127.0.0.1:9050` oder spezifische Client-IPs)
 - Authentifizierung für das Web-Interface hinzufügen (HTTP Auth oder Token-basiert)
-- Ordnungsgemäße DNS-Weiterleitung konfigurieren um Leaks zu verhindern
-- Vollständige transparente Proxy-Regeln für allen Traffic implementieren
+- Ordnungsgemäße DNS-Weiterleitung konfigurieren um Leaks zu verhindern (Pi-hole-Kompatibilität automatisch behandelt)
+- ✅ Vollständige transparente Proxy-Regeln für allen TCP-Traffic nun implementiert
 - Firewall-Regeln verwenden um Proxy-Zugang auf vertrauenswürdige Geräte zu beschränken
+
+### 🔍 Pi-hole Integration
+Pi-hole, sofern installiert, kann mit diesem Anonymitäts-Setup koexistieren:
+- Lokale DNS-Anfragen (127.0.0.1:53) werden für Pi-hole Ad-Blocking beibehalten
+- Externe DNS-Anfragen werden automatisch durch Tor's DNS-Resolver geleitet (Port 9053)
+- Dies erhält die Ad-Blocking-Funktionalität während DNS-Privatsphäre durch Tor gewährleistet wird
 
 ### 🎯 Vorgesehener Anwendungsfall
 Dieses System ist als **LAN-Gateway** konzipiert, bei dem mehrere Geräte den Raspberry Pi als Anonymitäts-Proxy verwenden. Ohne ordnungsgemäße Zugangskontrollen entstehen Sicherheitsrisiken in Mehrbenutzer-Umgebungen.

@@ -351,9 +351,29 @@ iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
 iptables -A INPUT -p tcp --dport 9040 -j ACCEPT
 iptables -A INPUT -p tcp --dport 9053 -j ACCEPT
 
-# NAT rules for transparent proxy (optional)
+# Complete transparent proxy rules
+# DNS through Tor (but preserve Pi-hole if running on port 53)
+iptables -t nat -A OUTPUT -p udp --dport 53 -d 127.0.0.1 -j ACCEPT  # Keep local DNS
+iptables -t nat -A OUTPUT -p tcp --dport 53 -d 127.0.0.1 -j ACCEPT  # Keep local DNS
+iptables -t nat -A OUTPUT -p udp --dport 53 -j REDIRECT --to-port 9053  # Route other DNS to Tor
+iptables -t nat -A OUTPUT -p tcp --dport 53 -j REDIRECT --to-port 9053  # Route other DNS to Tor
+
+# HTTP/HTTPS through Tor transparent proxy
 iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDIRECT --to-port 9040
 iptables -t nat -A OUTPUT -p tcp --dport 443 -j REDIRECT --to-port 9040
+
+# Route all other TCP traffic through Tor (except local and Tor itself)
+iptables -t nat -A OUTPUT -p tcp -d 127.0.0.0/8 -j ACCEPT  # Keep local traffic
+iptables -t nat -A OUTPUT -p tcp -d 192.168.0.0/16 -j ACCEPT  # Keep LAN traffic
+iptables -t nat -A OUTPUT -p tcp -d 10.0.0.0/8 -j ACCEPT  # Keep LAN traffic
+iptables -t nat -A OUTPUT -p tcp -d 172.16.0.0/12 -j ACCEPT  # Keep LAN traffic
+iptables -t nat -A OUTPUT -p tcp --dport 9050 -j ACCEPT  # Don't redirect Tor SOCKS
+iptables -t nat -A OUTPUT -p tcp --dport 9051 -j ACCEPT  # Don't redirect Tor control
+iptables -t nat -A OUTPUT -p tcp -j REDIRECT --to-port 9040  # Everything else through Tor
+
+# Block non-Tor traffic as failsafe
+iptables -A OUTPUT -p tcp --dport 80 -m owner ! --uid-owner debian-tor -j DROP
+iptables -A OUTPUT -p tcp --dport 443 -m owner ! --uid-owner debian-tor -j DROP
 
 # Save rules
 iptables-save > /etc/iptables/rules.v4
