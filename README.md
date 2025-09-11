@@ -124,6 +124,7 @@ After configuration, verify anonymity:
 - If you lose internet connection after enabling proxies: disable all proxies first, then enable only SOCKS5
 - If sites don't load: check the bypass settings include local network ranges
 - If Tor check fails: verify the Pi's anonymity services are running with `sudo check-anonymity`
+- **Important**: Tor must be configured to listen on all interfaces (`0.0.0.0:9050`) for external client access
 
 ⚠️ **Important**: Without proxy configuration, devices will use their normal internet connection and won't be anonymized.
 
@@ -132,8 +133,21 @@ After configuration, verify anonymity:
 ### Tor Configuration
 Edit `/etc/tor/torrc` to customize:
 - Exit node countries
-- Circuit refresh intervals
+- Circuit refresh intervals  
 - Logging levels
+
+**Default Configuration:**
+```bash
+# SOCKS Port für lokale und externe Verbindungen
+SocksPort 0.0.0.0:9050
+
+# Nur Exit-Nodes aus sicheren Ländern
+ExitNodes {ch},{is},{ro},{se},{no},{dk},{nl}
+StrictNodes 1
+
+# Verhindere Exit-Nodes aus unsicheren Ländern  
+ExcludeExitNodes {us},{ca},{gb},{au},{nz},{cn},{ru},{ir},{kp}
+```
 
 ### Firewall Rules
 The system automatically configures iptables to:
