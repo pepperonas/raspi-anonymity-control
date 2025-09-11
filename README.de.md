@@ -34,7 +34,7 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
-Das Installationsskript führt Sie durch den gesamten Einrichtungsprozess und konfiguriert alle notwendigen Dienste automatisch.
+Das Installationsskript führt dich durch den gesamten Einrichtungsprozess und konfiguriert alle notwendigen Dienste automatisch.
 
 ## 🔧 Manuelle Installation
 
@@ -57,7 +57,7 @@ sudo apt install -y tor obfs4proxy openvpn wireguard \
 sudo nano /etc/tor/torrc
 ```
 
-Fügen Sie folgende Zeilen hinzu:
+Füge folgende Zeilen hinzu:
 ```
 SocksPort 0.0.0.0:9050
 SocksPolicy accept *
@@ -83,16 +83,16 @@ npm start
 ## 💻 Client-Konfiguration
 
 ### Windows
-1. Öffnen Sie **Einstellungen** → **Netzwerk & Internet** → **Proxy**
-2. Aktivieren Sie "Proxyserver verwenden"
+1. Öffne **Einstellungen** → **Netzwerk & Internet** → **Proxy**
+2. Aktiviere "Proxyserver verwenden"
 3. Adresse: `[Raspberry-Pi-IP]`
 4. Port: `9050`
-5. Aktivieren Sie "Proxy nicht für lokale Adressen verwenden"
+5. Aktiviere "Proxy nicht für lokale Adressen verwenden"
 
 ### macOS
-1. Öffnen Sie **Systemeinstellungen** → **Netzwerk**
-2. Wählen Sie Ihre Verbindung → **Erweitert** → **Proxys**
-3. Aktivieren Sie "SOCKS-Proxy"
+1. Öffne **Systemeinstellungen** → **Netzwerk**
+2. Wähle deine Verbindung → **Erweitert** → **Proxys**
+3. Aktiviere "SOCKS-Proxy"
 4. Server: `[Raspberry-Pi-IP]`
 5. Port: `9050`
 
@@ -105,14 +105,14 @@ export HTTPS_PROXY=socks5://[Raspberry-Pi-IP]:9050
 ```
 
 ### iOS
-1. **Einstellungen** → **WLAN** → Info-Symbol neben Ihrem Netzwerk
+1. **Einstellungen** → **WLAN** → Info-Symbol neben deinem Netzwerk
 2. **HTTP-Proxy konfigurieren** → **Manuell**
 3. Server: `[Raspberry-Pi-IP]`
 4. Port: `9050`
 5. Authentifizierung: Aus
 
 ### Android
-1. **Einstellungen** → **WLAN** → Lange auf Ihr Netzwerk drücken
+1. **Einstellungen** → **WLAN** → Lange auf dein Netzwerk drücken
 2. **Netzwerk ändern** → **Erweiterte Optionen**
 3. Proxy: **Manuell**
 4. Proxy-Hostname: `[Raspberry-Pi-IP]`
@@ -120,7 +120,7 @@ export HTTPS_PROXY=socks5://[Raspberry-Pi-IP]:9050
 
 ## 🌐 Web-Dashboard
 
-Greifen Sie auf das Dashboard zu unter:
+Greife auf das Dashboard zu unter:
 ```
 http://[Raspberry-Pi-IP]:3000
 ```
@@ -208,7 +208,7 @@ sudo systemctl enable wg-quick@wg0
 
 ### Access Point-Modus
 
-WiFi-Hotspot mit automatischem Tor-Routing erstellen:
+Erstelle einen WiFi-Hotspot mit automatischem Tor-Routing:
 
 ```bash
 # hostapd konfigurieren
@@ -227,7 +227,7 @@ macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
 wpa=2
-wpa_passphrase=IhrSicheresPasswort
+wpa_passphrase=DeinSicheresPasswort
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
@@ -273,13 +273,13 @@ Wichtige Log-Dateien:
 
 ## 🤝 Beitragen
 
-Beiträge sind willkommen! Bitte lesen Sie unsere [Beitragsrichtlinien](CONTRIBUTING.md) für Details.
+Beiträge sind willkommen! Bitte lies unsere [Beitragsrichtlinien](CONTRIBUTING.md) für Details.
 
-1. Forken Sie das Repository
-2. Erstellen Sie Ihren Feature-Branch (`git checkout -b feature/AmazingFeature`)
-3. Committen Sie Ihre Änderungen (`git commit -m 'Add some AmazingFeature'`)
-4. Pushen Sie zum Branch (`git push origin feature/AmazingFeature`)
-5. Öffnen Sie einen Pull Request
+1. Forke das Repository
+2. Erstelle deinen Feature-Branch (`git checkout -b feature/AmazingFeature`)
+3. Committe deine Änderungen (`git commit -m 'Add some AmazingFeature'`)
+4. Pushe zum Branch (`git push origin feature/AmazingFeature`)
+5. Öffne einen Pull Request
 
 ## 📄 Lizenz
 
@@ -299,9 +299,9 @@ Dieses Tool ist nur für legale Zwecke gedacht. Nutzer sind verantwortlich für 
 ## 📞 Support
 
 Für Probleme und Fragen:
-- Öffnen Sie ein [GitHub Issue](https://github.com/yourusername/anonymity-control/issues)
-- Besuchen Sie unser [Wiki](https://github.com/yourusername/anonymity-control/wiki)
-- Treten Sie unserer [Community](https://discord.gg/yourinvite) bei
+- Öffne ein [GitHub Issue](https://github.com/yourusername/anonymity-control/issues)
+- Besuche unser [Wiki](https://github.com/yourusername/anonymity-control/wiki)
+- Tritt unserer [Community](https://discord.gg/yourinvite) bei
 
 ---
 
